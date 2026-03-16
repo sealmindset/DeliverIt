@@ -1,0 +1,12 @@
+{
+  "name": "mock-jira",
+  "version": "1.0.0",
+  "description": "Mock Jira REST API for DeliverIt local development",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

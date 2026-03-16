@@ -1,0 +1,169 @@
+{
+  "project_name": "DeliverIt",
+  "purpose": "Task tracker that keeps teams focused and accountable, with mandatory readiness checklists before tasks can be closed and two-way Jira sync",
+  "project_type": "web-app",
+  "active_tiers": [0, 1],
+  "features": [
+    "Task board with assignments, deadlines, and status tracking",
+    "Readiness checklists -- mandatory completion before closing tasks",
+    "Multi-project support with per-project task organization",
+    "Manager dashboard with project health, deadlines at risk, completion rates",
+    "Two-way Jira sync -- tasks stay in sync between DeliverIt and Jira",
+    "Deadline tracking with overdue/at-risk indicators"
+  ],
+  "users": {
+    "description": "Internal team plus managers and leads",
+    "estimated_count": "10-50",
+    "internal_or_external": "internal"
+  },
+  "auth": {
+    "needed": true,
+    "provider": "azure-ad",
+    "token_expiry": "8 hours"
+  },
+  "roles": [
+    {
+      "name": "Super Admin",
+      "description": "Full system access, manages users and roles",
+      "is_system": true
+    },
+    {
+      "name": "Admin",
+      "description": "App administration, user management",
+      "is_system": true
+    },
+    {
+      "name": "Manager",
+      "description": "Assign tasks, set deadlines, view dashboards, manage projects",
+      "is_system": true
+    },
+    {
+      "name": "User",
+      "description": "View assigned tasks, update status, complete readiness checklists",
+      "is_system": true
+    }
+  ],
+  "permissions": {
+    "dashboard": ["view"],
+    "projects": ["view", "create", "edit", "delete"],
+    "tasks": ["view", "create", "edit", "delete"],
+    "checklists": ["view", "create", "edit", "delete"],
+    "users": ["view", "create", "edit", "delete"],
+    "roles": ["view", "create", "edit", "delete"]
+  },
+  "stack": {
+    "frontend": "Next.js 15",
+    "backend": "FastAPI",
+    "database": "PostgreSQL 16",
+    "orm": "SQLAlchemy + Alembic",
+    "validation": "Pydantic",
+    "auth_tokens": "stateless-jwt",
+    "auth_library": "authlib",
+    "jwt_library": "PyJWT",
+    "language": "Python 3.12 + TypeScript",
+    "build_tool": "npm",
+    "runtime": "Node.js 22 + Python 3.12",
+    "ui": "Tailwind CSS + shadcn/ui"
+  },
+  "pages": [
+    {
+      "name": "Dashboard",
+      "path": "/dashboard",
+      "description": "Project health overview, deadlines at risk, task completion rates",
+      "roles": ["Super Admin", "Admin", "Manager", "User"]
+    },
+    {
+      "name": "Projects",
+      "path": "/projects",
+      "description": "List all projects with status, progress, and team count",
+      "roles": ["Super Admin", "Admin", "Manager", "User"]
+    },
+    {
+      "name": "Project Detail",
+      "path": "/projects/[id]",
+      "description": "Tasks within a project, progress bar, team members, Jira sync status",
+      "roles": ["Super Admin", "Admin", "Manager", "User"]
+    },
+    {
+      "name": "Tasks",
+      "path": "/tasks",
+      "description": "All tasks across projects with filters by project, assignee, status, deadline",
+      "roles": ["Super Admin", "Admin", "Manager", "User"]
+    },
+    {
+      "name": "Task Detail",
+      "path": "/tasks/[id]",
+      "description": "Full task view with readiness checklist, comments, Jira link, history",
+      "roles": ["Super Admin", "Admin", "Manager", "User"]
+    },
+    {
+      "name": "User Management",
+      "path": "/admin/users",
+      "description": "Add/edit/deactivate users, assign roles",
+      "roles": ["Super Admin", "Admin"]
+    },
+    {
+      "name": "Role Management",
+      "path": "/admin/roles",
+      "description": "Create custom roles, permission matrix editor",
+      "roles": ["Super Admin"]
+    }
+  ],
+  "ai_features": {
+    "usage_level": "none",
+    "prompt_management_tier": 0
+  },
+  "multi_tenancy": {
+    "needed": false,
+    "tenant_type": ""
+  },
+  "integrations": [
+    {
+      "system": "Jira",
+      "direction": "bidirectional",
+      "data_exchanged": "Projects, tasks, status, assignees",
+      "mock_service": "mock-jira",
+      "mock_port": 8443
+    }
+  ],
+  "mock_services": [
+    {
+      "name": "mock-oidc",
+      "purpose": "Local OIDC identity provider for Azure AD simulation",
+      "port": 3009,
+      "internal_port": 10090
+    },
+    {
+      "name": "mock-jira",
+      "purpose": "Simulates Jira REST API for two-way task sync",
+      "port": 8443
+    }
+  ],
+  "cloud": {
+    "provider": "azure",
+    "region": "",
+    "cli_authenticated": false
+  },
+  "deployment": {
+    "target": "azure",
+    "containerize": true,
+    "prototype_only": false
+  },
+  "security_scanner": {
+    "type": "",
+    "api_url": "",
+    "uses_github_issues": false
+  },
+  "ports": {
+    "frontend": 3002,
+    "backend": 8002,
+    "database": 5436,
+    "mock_oidc": 3009,
+    "mock_jira": 8443
+  },
+  "prompts_to_run": [1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 13, 14],
+  "skipped_guardrails": [
+    "Prompt #7 (Multi-Tenancy): Not needed -- single organization app",
+    "Prompt #10 (AI): No AI features requested"
+  ]
+}

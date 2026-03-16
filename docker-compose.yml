@@ -1,0 +1,101 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3002:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8002
+      - BACKEND_INTERNAL_URL=http://backend:8000
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8002:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      mock-oidc:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://deliverit:deliverit@db:5432/deliverit
+      - OIDC_ISSUER_URL=http://mock-oidc:10090
+      - OIDC_CLIENT_ID=mock-oidc-client
+      - OIDC_CLIENT_SECRET=mock-oidc-secret
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=http://localhost:3002
+      - BACKEND_URL=http://localhost:8002
+      - JIRA_BASE_URL=http://mock-jira:8080
+      - JIRA_AUTH_TOKEN=mock-jira-token
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5436:5432"
+    environment:
+      - POSTGRES_USER=deliverit
+      - POSTGRES_PASSWORD=deliverit
+      - POSTGRES_DB=deliverit
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U deliverit"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  mock-oidc:
+    build:
+      context: ./mock-services/mock-oidc
+    ports:
+      - "3009:10090"
+    profiles:
+      - dev
+    environment:
+      - MOCK_OIDC_PORT=10090
+      - MOCK_OIDC_EXTERNAL_BASE_URL=http://localhost:3009
+      - MOCK_OIDC_INTERNAL_BASE_URL=http://mock-oidc:10090
+      - MOCK_OIDC_CLIENT_ID=mock-oidc-client
+      - MOCK_OIDC_CLIENT_SECRET=mock-oidc-secret
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:10090/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  mock-jira:
+    build:
+      context: ./mock-services/mock-jira
+    ports:
+      - "8443:8080"
+    profiles:
+      - dev
+    environment:
+      - PORT=8080
+      - AUTH_TOKEN=mock-jira-token
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres_data:
