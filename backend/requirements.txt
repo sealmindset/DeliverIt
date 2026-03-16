@@ -3,8 +3,9 @@ uvicorn[standard]==0.34.0
 sqlalchemy[asyncio]==2.0.36
 asyncpg==0.30.0
 alembic==1.14.1
-authlib==1.4.1
-PyJWT==2.10.1
+authlib==1.6.9
+PyJWT==2.12.1
+cryptography>=46.0.5
 httpx==0.28.1
 pydantic-settings==2.7.1
-python-multipart==0.0.20
+python-multipart==0.0.22
