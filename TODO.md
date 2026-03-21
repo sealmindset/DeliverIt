@@ -9,7 +9,7 @@
 ## Enhancements
 - [ ] Email/Slack notifications for approaching deadlines
 - [ ] Task comments and activity feed
-- [ ] Export reports to PDF/CSV
+- [x] Export reports to PDF/CSV
 - [ ] Bulk task operations (assign, move, close)
 
 ## Testing

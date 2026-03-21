@@ -2,6 +2,17 @@
 
 All notable changes to DeliverIt will be documented in this file.
 
+## [0.2.0] - 2026-03-20
+
+### Added
+- Export reports to CSV and PDF from Dashboard, Projects, and Tasks pages
+- Export dropdown button with CSV and PDF options on each page
+- Backend export endpoints: /api/export/tasks/{csv|pdf}, /api/export/projects/{csv|pdf}, /api/export/dashboard/{csv|pdf}
+- PDF reports with styled tables using reportlab
+- Dashboard export includes overview metrics and at-risk tasks
+- Projects export includes completion percentages
+- Tasks export includes all columns (project, status, priority, assignee, deadline, checklist progress)
+
 ## [0.1.0] - 2026-03-13
 
 ### Added

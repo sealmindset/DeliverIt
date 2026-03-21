@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
+import { ExportButton } from "@/components/export-button";
 import { type ColumnDef } from "@tanstack/react-table";
 
 const STATUS_OPTIONS = [
@@ -225,15 +226,18 @@ export default function ProjectsPage() {
             Manage all your projects
           </p>
         </div>
-        {hasPermission("projects", "create") && (
-          <button
-            onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-2 rounded-md bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
-          >
-            <Plus className="h-4 w-4" />
-            New Project
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          <ExportButton resource="projects" />
+          {hasPermission("projects", "create") && (
+            <button
+              onClick={() => setShowCreate(true)}
+              className="inline-flex items-center gap-2 rounded-md bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
+            >
+              <Plus className="h-4 w-4" />
+              New Project
+            </button>
+          )}
+        </div>
       </div>
 
       <DataTable

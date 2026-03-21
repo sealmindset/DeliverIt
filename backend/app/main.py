@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import auth, checklists, dashboard, jira, permissions, projects, roles, tasks, users
+from app.routers import auth, checklists, dashboard, export, jira, permissions, projects, roles, tasks, users
 
 app = FastAPI(
     title="DeliverIt API",
@@ -29,6 +29,7 @@ app.include_router(tasks.router, prefix="/api")
 app.include_router(checklists.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(jira.router, prefix="/api")
+app.include_router(export.router, prefix="/api")
 
 
 @app.get("/health")
